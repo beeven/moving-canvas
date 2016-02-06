@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="node_modules/knockout/build/output/knockout-latest.js"></script>
+    <style media="screen">
+      html,body, .container {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      .info-label {
+        background-color: rgb(189, 189, 189);
+        font-size: 12px;
+        font-family: sans-serif;
+        position: absolute;
+        padding: 2px 5px;
+        margin: 5px;
+        opacity: 0.5;
+        border-radius: 4px;
+        z-index: 10;
+      }
+      .canvas {
+        z-index: 0;
+        transform-origin: center;
+        transform-style: preserve-3d;
+        width: 2457px;
+        height: 1743px;
+        background-image: url("doa.jpg");
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition-timing-function: ease-in-out;
+        /*transform: translate(0px,-500px);*/
+      }
+      .canvas .bubble {
+        width: 200px;
+        height: 40px;
+        border-radius: 4px;
+        background-color: rgba(190, 190, 190, 0.8);
+        line-height: 40px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="info-label">
+        <span>clientX:</span><span data-bind="text: clientX"></span>
+        <span>clientY:</span><span data-bind="text: clientX"></span>
+        <span>width:</span><span data-bind="text: windowWidth"></span>
+        <span>height:</span><span data-bind="text: windowHeight"></span>
+      </div>
+      <div class="canvas">
+        <div class="bubble">
+          <span>This is center</span>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    function AppViewModel() {
+      var that = this;
+      this.clientX = ko.observable(0);
+      this.clientY = ko.observable(0);
+      this.windowWidth = ko.observable(0);
+      this.windowHeight = ko.observable(0);
+      this.relativeX = ko.computed(function(){
+        return this.clientX() - this.windowWidth()/2;
+      },this);
+      this.relativeY = ko.computed(function(){
+        return this.clientY() - this.windowHeight()/2;
+      },this);
+
+      this.init = function(){
+        var elem = document.getElementsByClassName("container")[0];
+        that.windowWidth(elem.offsetWidth);
+        that.windowHeight(elem.offsetHeight);
+        elem.addEventListener("mousemove",function(event){
+          that.clientX(event.clientX);
+          that.clientY(event.clientY);
+        },false);
+        elem.addEventListener("mouseout",function(event){
+          that.clientX(that.windowWidth()/2);
+          that.clientY(that.windowHeight()/2);
+        },false)
+        window.addEventListener("resize",function(event) {
+          that.windowWidth(elem.offsetWidth);
+          that.windowHeight(elem.offsetHeight);
+        },false);
+      }
+
+    }
+    var appViewModel = new AppViewModel();
+    appViewModel.init();
+    ko.applyBindings(appViewModel);
+  </script>
+</html>
