@@ -1,0 +1,60 @@
+html,
+body,
+.container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.widget {
+  position: absolute;
+  margin: 5px;
+  top: 0;
+  left: 0;
+}
+.widget .info-label {
+  background-color: #bdbdbd;
+  font-size: 12px;
+  font-family: sans-serif;
+/*position: absolute;*/
+  padding: 2px 5px;
+  opacity: 0.5;
+  border-radius: 4px;
+  z-index: 10;
+  float: left;
+}
+.widget .switch {
+  margin-left: 10px;
+  float: left;
+}
+.canvas {
+  z-index: 0;
+  transform-origin: center;
+  transform-style: preserve-3d;
+/*width: 2457px;
+  height: 1743px;*/
+/*background-image: url("doa.jpg");*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-timing-function: ease-in-out;
+  transition: transform;
+  position: relative;
+/*transform: translate(0px,-500px);*/
+}
+.canvas .bubble-layer {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.canvas .bubble-layer .bubble-text {
+  border-radius: 4px;
+  background-color: rgba(184,184,184,0.5);
+  padding: 10px 20px;
+  font-family: sans-serif;
+}
