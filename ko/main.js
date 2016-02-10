@@ -16,9 +16,9 @@
     }, this);
 
     this.availableImages = ko.observableArray([
-        {name:'Tenaya Lake', url:'images/tenaya-lake.jpg'},
-        {name:"Yosemite", url:"images/yosemite.jpg"},
-        {name:"DOA", url:"images/doa.jpg"}
+        {name:'Tenaya Lake', url:'/images/tenaya-lake.jpg'},
+        {name:"Yosemite", url:"/images/yosemite.jpg"},
+        {name:"DOA", url:"/images/doa.jpg"}
     ]);
     this.selectedImage = ko.observable();
 
