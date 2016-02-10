@@ -25,7 +25,11 @@ System.register(['angular2/core', './pane.component'], function(exports_1) {
                     this.element = element;
                     this.images = BackgroundImages;
                     this.selectedImage = this.images[0].url;
+                    this.originTransform = "";
+                    this.mousemoveTransform = "";
                     this.elem = element.nativeElement;
+                    window.addEventListener("mouseout", this.onMouseOut);
+                    window.addEventListener("blur", this.onMouseOut);
                 }
                 AppComponent.prototype.ngOnInit = function () {
                     var d = this.elem.getElementsByClassName("container")[0];
@@ -38,28 +42,32 @@ System.register(['angular2/core', './pane.component'], function(exports_1) {
                     this.windowHeight = d.offsetHeight;
                 };
                 AppComponent.prototype.onMouseMove = function ($event) {
-                    this.mouseX = $event.offsetX;
-                    this.mouseY = $event.offsetY;
+                    this.mouseX = $event.clientX;
+                    this.mouseY = $event.clientY;
+                    this.mousemoveTransform = "translate(" +
+                        (this.windowWidth / 2 - this.mouseX) / (this.windowWidth) * (this.paneWidth - this.windowWidth) + "px," +
+                        (this.windowHeight / 2 - this.mouseY) / (this.windowHeight) * (this.paneHeight - this.windowHeight) + "px) ";
+                    if ($event.movementX + $event.clientX <= 0 || $event.movementX + $event.clientX >= this.windowWidth
+                        || $event.movementY + $event.clientY <= 0 || $event.movementY + $event.clientY >= this.windowHeight) {
+                        this.mousemoveTransform = "";
+                    }
+                };
+                AppComponent.prototype.onMouseOut = function ($event) {
+                    if ($event.toElement || $event.relatedTarget) {
+                        return;
+                    }
                 };
                 AppComponent.prototype.onPaneResize = function ($event) {
                     this.paneWidth = $event.width;
                     this.paneHeight = $event.height;
-                    this.paneTransform = "translate(" + (this.windowWidth - this.paneWidth) / 2 + "px," +
-                        (this.windowHeight - this.paneHeight) / 2 + "px)";
-                    // if((this.paneWidth - this.windowWidth) > 0 ) {
-                    //     //this.paneTransform = "translateX("+ (this.windowWidth - this.paneWidth)/6 + "px)";
-                    // } else {
-                    //     this.paneTransform = "";
-                    // }
-                    // if((this.paneHeight - this.windowHeight) > 0) {
-                    //     this.paneTransform += "translateY("+ (this.windowHeight - this.paneHeight)/2 + "px)";
-                    // }
+                    this.originTransform = "translate(" + (this.windowWidth - this.paneWidth) / 2 + "px," +
+                        (this.windowHeight - this.paneHeight) / 2 + "px) ";
                 };
                 AppComponent = __decorate([
                     core_1.Component({
                         selector: 'my-app',
-                        template: "\n<div class=\"container\" (window:resize)=\"onResize($event)\" (mousemove)=\"onMouseMove($event)\">\n<pane [imgUrl]='selectedImage' (resize)='onPaneResize($event)'\n    [style.transform]=\"paneTransform\"\n    [style.width]='paneWidth'\n    [style.height]='paneHeight'></pane>\n<div class=\"widget\">\n    <div class=\"info-label\">\n      <span>mouseX: {{mouseX}}</span>\n      <span>mouseY: {{mouseY}}</span>\n      <span>width: {{windowWidth}}</span>\n      <span>height: {{windowHeight}}</span>\n      <span>paneWidth: {{paneWidth}}</span>\n      <span>paneHeight: {{paneHeight}} </span>\n    </div>\n    <div class=\"switch\">\n        <select [(ngModel)]=\"selectedImage\">\n            <option *ngFor=\"#img of images; #i = index\" [value]=\"img.url\">{{img.name}}</option>\n        </select>\n    </div>\n</div>\n</div>\n    ",
-                        styles: ["\n        .container {\n          width: 100%;\n          height: 100%;\n          margin: 0;\n          padding: 0;\n        }\n        .widget {\n          position: absolute;\n          margin: 5px;\n          top: 0;\n          left: 0;\n        }\n        .widget .info-label {\n          background-color: #bdbdbd;\n          font-size: 12px;\n          font-family: sans-serif;\n          padding: 2px 5px;\n          opacity: 0.5;\n          border-radius: 4px;\n          z-index: 10;\n          float: left;\n        }\n        .widget .switch {\n          margin-left: 10px;\n          float: left;\n        }\n        pane {\n          z-index: 0;\n          transform-origin: center;\n          transform-style: preserve-3d;\n          display: flex;\n          align-items: center;\n          justify-content: center;\n          transition-timing-function: ease-in-out;\n          transition: transform;\n          position: relative;\n      }\n      "],
+                        template: "\n<div class=\"container\" (window:resize)=\"onResize($event)\"\n    (mousemove)=\"onMouseMove($event)\">\n<pane [imgUrl]='selectedImage' (resize)='onPaneResize($event)'\n    [style.transform]=\"originTransform + mousemoveTransform\"></pane>\n<div class=\"widget\">\n    <div class=\"info-label\">\n      <span>mouseX: {{mouseX}}</span>\n      <span>mouseY: {{mouseY}}</span>\n      <span>width: {{windowWidth}}</span>\n      <span>height: {{windowHeight}}</span>\n      <span>paneWidth: {{paneWidth}}</span>\n      <span>paneHeight: {{paneHeight}} </span>\n    </div>\n    <div class=\"switch\">\n        <select [(ngModel)]=\"selectedImage\">\n            <option *ngFor=\"#img of images; #i = index\" [value]=\"img.url\">{{img.name}}</option>\n        </select>\n    </div>\n</div>\n</div>\n    ",
+                        styles: ["\n        .container {\n          width: 100%;\n          height: 100%;\n          margin: 0;\n          padding: 0;\n        }\n        .widget {\n          position: absolute;\n          margin: 5px;\n          top: 0;\n          left: 0;\n        }\n        .widget .info-label {\n          background-color: #bdbdbd;\n          font-size: 12px;\n          font-family: sans-serif;\n          padding: 2px 5px;\n          opacity: 0.5;\n          border-radius: 4px;\n          z-index: 10;\n          float: left;\n        }\n        .widget .switch {\n          margin-left: 10px;\n          float: left;\n        }\n        pane {\n          z-index: 0;\n          transform-origin: center;\n          transform-style: preserve-3d;\n          display: flex;\n          align-items: center;\n          justify-content: center;\n          transition: transform 0.8s ease-out;\n          position: relative;\n      }\n      "],
                         directives: [pane_component_1.PaneComponent]
                     }), 
                     __metadata('design:paramtypes', [core_1.ElementRef])

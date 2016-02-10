@@ -25,6 +25,8 @@ System.register(['angular2/core'], function(exports_1) {
                 }
                 PaneComponent.prototype.onImageLoaded = function ($event) {
                     var img = this.elem.getElementsByTagName("img")[0];
+                    this.elem.style.width = img.naturalWidth;
+                    this.elem.style.height = img.naturalHeight;
                     this.resize.emit({ "width": img.naturalWidth, "height": img.naturalHeight });
                 };
                 __decorate([
@@ -39,7 +41,7 @@ System.register(['angular2/core'], function(exports_1) {
                     core_1.Component({
                         selector: 'pane',
                         template: "\n      <div class=\"bubble-layer\">\n        <span class=\"bubble-text\">This is center</span>\n      </div>\n      <img alt=\"\" [src]=\"imgUrl\" (load)=\"onImageLoaded($event)\">\n    ",
-                        styles: ["\n        .bubble-layer {\n          width: 100%;\n          height: 100%;\n          top: 0;\n          left: 0;\n          position: absolute;\n          display: flex;\n          justify-content: center;\n          align-items: center;\n        }\n        .bubble-layer .bubble-text {\n          border-radius: 4px;\n          background-color: rgba(184,184,184,0.5);\n          padding: 10px 20px;\n          font-family: sans-serif;\n        }\n        "]
+                        styles: ["\n        .bubble-layer {\n          width: 100%;\n          height: 100%;\n          top: 0;\n          left: 0;\n          position: absolute;\n          display: flex;\n          justify-content: center;\n          align-items: center;\n        }\n        .bubble-layer .bubble-text {\n          border-radius: 4px;\n          background-color: rgba(184,184,184,0.5);\n          padding: 10px 20px;\n          font-family: sans-serif;\n        }\n        img {\n            border: none;\n            margin: 0;\n            padding: 0;\n        }\n        "]
                     }), 
                     __metadata('design:paramtypes', [core_1.ElementRef])
                 ], PaneComponent);

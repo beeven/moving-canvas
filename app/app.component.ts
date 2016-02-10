@@ -9,11 +9,10 @@ interface BackgroundImage {
 @Component({
   selector: 'my-app',
   template: `
-<div class="container" (window:resize)="onResize($event)" (mousemove)="onMouseMove($event)">
+<div class="container" (window:resize)="onResize($event)"
+    (mousemove)="onMouseMove($event)">
 <pane [imgUrl]='selectedImage' (resize)='onPaneResize($event)'
-    [style.transform]="paneTransform"
-    [style.width]='paneWidth'
-    [style.height]='paneHeight'></pane>
+    [style.transform]="originTransform + mousemoveTransform"></pane>
 <div class="widget">
     <div class="info-label">
       <span>mouseX: {{mouseX}}</span>
@@ -65,8 +64,7 @@ interface BackgroundImage {
           display: flex;
           align-items: center;
           justify-content: center;
-          transition-timing-function: ease-in-out;
-          transition: transform;
+          transition: transform 0.8s ease-out;
           position: relative;
       }
       `],
@@ -82,10 +80,12 @@ export class AppComponent implements OnInit {
   mouseX: number;
   mouseY: number;
   elem: any;
-  paneTransform: string;
+  originTransform: string = "";
+  mousemoveTransform: string = "";
   constructor(private element: ElementRef) {
     this.elem = element.nativeElement;
-
+    window.addEventListener("mouseout",this.onMouseOut);
+    window.addEventListener("blur",this.onMouseOut);
   }
   ngOnInit() {
     var d = this.elem.getElementsByClassName("container")[0];
@@ -98,24 +98,27 @@ export class AppComponent implements OnInit {
     this.windowHeight = d.offsetHeight;
   }
   onMouseMove($event) {
-    this.mouseX = $event.offsetX;
-    this.mouseY = $event.offsetY;
+    this.mouseX = $event.clientX;
+    this.mouseY = $event.clientY;
+    this.mousemoveTransform ="translate("+
+        (this.windowWidth/2 - this.mouseX)/(this.windowWidth)*(this.paneWidth-this.windowWidth) + "px,"+
+        (this.windowHeight/2 - this.mouseY) / (this.windowHeight)*(this.paneHeight - this.windowHeight) + "px) ";
+    if($event.movementX+$event.clientX <= 0 || $event.movementX + $event.clientX >= this.windowWidth
+        || $event.movementY + $event.clientY <= 0 || $event.movementY + $event.clientY >= this.windowHeight) {
+            this.mousemoveTransform = "";
+        }
+  }
+  onMouseOut($event) {
+      if($event.toElement||$event.relatedTarget) {
+          return;
 
+      }
   }
   onPaneResize($event) {
     this.paneWidth = $event.width;
     this.paneHeight = $event.height;
-
-    this.paneTransform = "translate("+(this.windowWidth - this.paneWidth)/2 + "px,"+
-                         (this.windowHeight - this.paneHeight)/2 + "px)";
-    // if((this.paneWidth - this.windowWidth) > 0 ) {
-    //     //this.paneTransform = "translateX("+ (this.windowWidth - this.paneWidth)/6 + "px)";
-    // } else {
-    //     this.paneTransform = "";
-    // }
-    // if((this.paneHeight - this.windowHeight) > 0) {
-    //     this.paneTransform += "translateY("+ (this.windowHeight - this.paneHeight)/2 + "px)";
-    // }
+    this.originTransform = "translate("+(this.windowWidth - this.paneWidth)/2 + "px,"+
+                         (this.windowHeight - this.paneHeight)/2 + "px) ";
   }
 }
 

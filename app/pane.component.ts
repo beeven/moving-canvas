@@ -25,6 +25,11 @@ import {Component,Input,Output,ElementRef,EventEmitter} from 'angular2/core';
           padding: 10px 20px;
           font-family: sans-serif;
         }
+        img {
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
         `]
 })
 export class PaneComponent {
@@ -37,6 +42,8 @@ export class PaneComponent {
     }
     onImageLoaded($event) {
         var img = this.elem.getElementsByTagName("img")[0];
+        this.elem.style.width = img.naturalWidth;
+        this.elem.style.height = img.naturalHeight;
         this.resize.emit({"width":img.naturalWidth, "height":img.naturalHeight});
     }
 }
